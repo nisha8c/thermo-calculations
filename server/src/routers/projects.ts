@@ -2,7 +2,6 @@ import { initTRPC } from "@trpc/server";
 import { z } from "zod";
 import { ProjectSchema } from "@contracts/core";
 import { prisma } from "../db/prisma.js";
-import type { Prisma } from "@prisma/client";
 
 const t = initTRPC.create();
 
@@ -14,20 +13,46 @@ export const projectsRouter = t.router({
     ),
 
     create: t.procedure.input(ProjectSchema).mutation(async ({ input }) => {
-        const project = await prisma.project.create({
+        return prisma.project.create({
             data: {
                 name: input.name,
                 description: input.description ?? null,
                 system_type: input.system_type,
-                // elements is Json in Prisma → cast safely
-                elements: input.elements, // string[] is valid JSON input
+                elements: input.elements,
                 status: input.status ?? "active",
             },
         });
-        return project;
     }),
 
-    byId: t.procedure.input(z.object({ id: z.string() })).query(({ input }) =>
-        prisma.project.findUniqueOrThrow({ where: { id: input.id } })
-    ),
+    // update
+    update: t.procedure
+        .input(
+            z.object({
+                id: z.string(),
+                data: ProjectSchema.partial(),
+            })
+        )
+        .mutation(({ input }) =>
+            prisma.project.update({
+                where: { id: input.id },
+                data: {
+                    ...input.data,
+                    // allow omitting fields
+                    description: input.data.description ?? undefined,
+                    elements: input.data.elements ?? undefined,
+                    status: input.data.status ?? undefined,
+                },
+            })
+        ),
+
+    // delete
+    delete: t.procedure
+        .input(z.object({ id: z.string() }))
+        .mutation(({ input }) => prisma.project.delete({ where: { id: input.id } })),
+
+    byId: t.procedure
+        .input(z.object({ id: z.string() }))
+        .query(({ input }) =>
+            prisma.project.findUniqueOrThrow({ where: { id: input.id } })
+        ),
 });
