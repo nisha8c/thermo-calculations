@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  //output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  system_type  String
+  elements     Json // array of strings
+  status       String        @default("active")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  calculations Calculation[]
+}
+
+model Calculation {
+  id               String   @id @default(cuid())
+  project_id       String?
+  calculation_type String
+  title            String
+  elements         Json
+  temperature_min  Float?
+  temperature_max  Float?
+  temperature_unit String?  @default("K")
+  pressure         Float?
+  composition      Json?
+  results          Json?
+  status           String   @default("pending")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  project Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
+}
