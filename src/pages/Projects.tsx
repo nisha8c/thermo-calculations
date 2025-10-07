@@ -1,5 +1,3 @@
-// thermo-calculations/src/pages/Projects.tsx
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "../lib/trpc";
@@ -12,10 +10,20 @@ export default function Projects() {
         onSuccess: () => utils.projects.list.invalidate()
     });
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<ProjectInput>({
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        watch,
+        formState: { errors }
+    } = useForm<ProjectInput>({
         resolver: zodResolver(ProjectSchema),
         defaultValues: { status: "active", system_type: "binary", elements: [] }
     });
+
+    // (optional) live preview of parsed elements
+    const elements = watch("elements");
 
     return (
         <div className="p-6 space-y-6">
@@ -24,8 +32,9 @@ export default function Projects() {
             <form
                 className="grid gap-3 max-w-xl"
                 onSubmit={handleSubmit(async (data) => {
-                    await create.mutateAsync({ ...data, elements: data.elements.filter(Boolean) });
-                    reset();
+                    // data.elements is already set via setValue below and validated by Zod
+                    await create.mutateAsync({ ...data });
+                    reset({ status: "active", system_type: "binary", elements: [] });
                 })}
             >
                 <input className="input" placeholder="Name" {...register("name")} />
@@ -43,14 +52,22 @@ export default function Projects() {
                     className="input"
                     placeholder="Elements (comma separated, e.g. Fe,C)"
                     onBlur={(e) => {
-                        const arr = e.currentTarget.value.split(",").map(s => s.trim()).filter(Boolean);
-                        // @ts-ignore small trick to set array without controller:
-                        e.target.form?.elements["elements"]?.value = "";
-                        // store locally in hidden input
+                        const arr = e.currentTarget.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean);
+                        // Put array into RHF so Zod can validate it
+                        setValue("elements", arr, { shouldValidate: true, shouldDirty: true });
                     }}
                 />
-                {/* Hidden array capture */}
+                {/* Keep a hidden field so RHF tracks the array value */}
                 <input type="hidden" {...register("elements")} />
+                {errors.elements && (
+                    <p className="text-red-500">{errors.elements.message as string}</p>
+                )}
+                {elements && elements.length > 0 && (
+                    <p className="text-xs text-slate-400">Parsed elements: {elements.join(", ")}</p>
+                )}
 
                 <button className="btn" type="submit" disabled={create.isPending}>
                     {create.isPending ? "Creating..." : "Create Project"}
@@ -58,10 +75,12 @@ export default function Projects() {
             </form>
 
             <div className="grid gap-2">
-                {list.data?.map(p => (
+                {(list.data ?? []).map((p: { id: string; name: string; system_type: string; status: string }) => (
                     <div key={p.id} className="rounded-xl border border-slate-700 p-4 bg-slate-900/40">
                         <div className="font-medium">{p.name}</div>
-                        <div className="text-sm text-slate-400">{p.system_type} • {p.status}</div>
+                        <div className="text-sm text-slate-400">
+                            {p.system_type} • {p.status}
+                        </div>
                     </div>
                 ))}
             </div>

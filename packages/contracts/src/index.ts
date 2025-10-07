@@ -7,7 +7,8 @@ export const ProjectSchema = z.object({
     elements: z.array(z.string()).min(1),
     status: z.enum(["active", "completed", "archived"]).default("active")
 });
-export type ProjectInput = z.infer<typeof ProjectSchema>;
+//export type ProjectInput = z.infer<typeof ProjectSchema>;
+export type ProjectInput = z.input<typeof ProjectSchema>;
 
 export const CalculationSchema = z.object({
     project_id: z.string().optional(), // can be linked later
@@ -30,4 +31,5 @@ export const CalculationSchema = z.object({
     results: z.unknown().optional(),
     status: z.enum(["pending","running","completed","failed"]).default("pending")
 });
-export type CalculationInput = z.infer<typeof CalculationSchema>;
+//export type CalculationInput = z.infer<typeof CalculationSchema>;
+export type CalculationInput = z.input<typeof CalculationSchema>;
