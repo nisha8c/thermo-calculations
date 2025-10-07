@@ -140,7 +140,7 @@ export default function Layout({ children }: LayoutProps) {
                             <Atom className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                            <h2 className="font-bold text-white text-sm">Thermo-Calc</h2>
+                            <h2 className="font-bold text-white text-sm">ThermoCalc</h2>
                         </div>
                     </div>
                     <Button
@@ -177,7 +177,7 @@ export default function Layout({ children }: LayoutProps) {
                                 <Atom className="w-6 h-6 text-white" />
                             </div>
                             <div className="hidden lg:block">
-                                <h2 className="font-bold text-white text-lg">Thermo-Calc</h2>
+                                <h2 className="font-bold text-white text-lg">ThermoCalc</h2>
                                 <p className="text-xs text-slate-400">Materials Science</p>
                             </div>
                         </div>
