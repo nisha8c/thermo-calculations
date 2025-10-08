@@ -32,6 +32,11 @@ Next up: phase diagrams, progress streaming, exportable plots.
 <img width="1763" height="910" alt="createPr" src="https://github.com/user-attachments/assets/710e4659-97ea-4e71-931e-3971d00aa2e5" />
 <img width="1763" height="910" alt="EditProj" src="https://github.com/user-attachments/assets/3cb41c8d-5132-42a2-8eaa-b7191cedea83" />
 
+## NOTE 
+THERE ARE  THREE WORKSPACES
+1. Server
+2. Root folder as frontend
+3. Packages / cntracts for Prisma Schema, Zod
 
 
 # React + TypeScript + Vite
