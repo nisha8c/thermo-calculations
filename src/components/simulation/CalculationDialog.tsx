@@ -127,26 +127,69 @@ const CalculationDialog = ({
         };
     };
 
+    const erf = (x: number): number => {
+        // Abramowitz & Stegun 7.1.26
+        const sign = x < 0 ? -1 : 1;
+        const ax = Math.abs(x);
+        const p = 0.3275911;
+        const a1 = 0.254829592;
+        const a2 = -0.284496736;
+        const a3 = 1.421413741;
+        const a4 = -1.453152027;
+        const a5 = 1.061405429;
+
+        const t = 1 / (1 + p * ax);
+        const y =
+            1 -
+            (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t) * Math.exp(-ax * ax);
+        return sign * y;
+    };
+
     const genDiffusion = (): DiffusionResult => {
-        // 1D profile -0.5..0.5 (normalized), interface near parameters.interface_position
+        // Params
         const T = parameters?.temperature ?? temperature ?? 1200;
-        const t = parameters?.time ?? 3600;
-        const D = parameters?.diffusion_coefficient ?? 1e-12;
-        const x0 = parameters?.interface_position ?? 0;
-        const n = 101;
+        const t = Math.max(parameters?.time ?? 3600, 1); // s
+        const D = Math.max(parameters?.diffusion_coefficient ?? 1e-12, 1e-20); // m^2/s
+        const x0_um = parameters?.interface_position ?? 0; // μm shift of interface
+
+        // Choose surface/bulk concentrations (wt%)
+        const C_s = 0;    // surface concentration of B (wt%)
+        const C_0 = 100;  // bulk concentration of B (wt%)
+
+        // Physical width ~ 2*sqrt(D t). Convert to μm
+        const L_um = 2 * Math.sqrt(D * t) * 1e6; // μm
+        // Plotting window (≈ ±3 widths)
+        const span = Math.max(50, Math.min(1000, Math.round(6 * L_um))); // μm
+        const n = 121;
+
+        // C(x,t) = C_s + (C_0 - C_s) * erf( x / (2*sqrt(D t)) )
+        const denom = 2 * Math.sqrt(D * t);
         const profileData = Array.from({ length: n }, (_, i) => {
-            const x = -0.5 + i / (n - 1); // -0.5..0.5
-            // Smooth step across interface with width ~ sqrt(D*t)
-            const width = Math.max(1e-6, Math.sqrt(Math.max(D * t, 1e-20)));
-            const concentration = 0.5 * (1 + Math.tanh((x - x0) / (5 * width)));
-            return { position: Number((x + 0.5).toFixed(4)), concentration: Number(concentration.toFixed(4)) };
+            const x_um = (i / (n - 1)) * span;    // 0 .. span (μm)
+            const x_m = (x_um - x0_um) * 1e-6;    // shift by interface, to meters
+            const arg = x_m / denom;
+            const C = C_s + (C_0 - C_s) * erf(arg);
+            return {
+                position: Number(x_um.toFixed(1)),                                  // μm
+                concentration: Number(Math.max(0, Math.min(100, C)).toFixed(2)),    // wt%
+            };
         });
+
+        // Penetration depth ~ 2*sqrt(D t)
+        const penetration_um = (2 * Math.sqrt(D * t) * 1e6).toFixed(1);
+
+        // Relative surface flux magnitude: |C0 - Cs| * sqrt(D/(π t))
+        const fluxMag = Math.abs(C_0 - C_s) * Math.sqrt(D / (Math.PI * t));
+
+        // Interface concentration (near x = x0)
+        const midIdx = 0; // array starts at x=0 which is the interface after shift
+        const interfaceC = profileData[midIdx]?.concentration.toFixed(2) ?? "—";
 
         return {
             profileData,
-            penetration_depth: `${(5 * Math.sqrt(D * t) * 1e6).toFixed(1)} µm`,
-            flux_rate: `${(D / 1e-12).toFixed(2)}× baseline`,
-            interface_concentration: `${profileData[Math.round(n / 2)].concentration}`,
+            penetration_depth: penetration_um,           // μm (string)
+            flux_rate: fluxMag.toExponential(2),         // string
+            interface_concentration: interfaceC,         // %
             meta: { T, t, D },
         };
     };
