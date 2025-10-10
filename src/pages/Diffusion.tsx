@@ -20,7 +20,6 @@ import { trpc } from "../lib/trpc";
 export default function Diffusion() {
     const [selectedElements, setSelectedElements] = useState<string[]>([]);
 
-    // ✅ 1) Give the state an explicit type so boundary_conditions is a union, not string
     const [parameters, setParameters] = useState<DiffusionParametersState>({
         temperature: 1200,
         time: 3600,
@@ -31,7 +30,6 @@ export default function Diffusion() {
 
     const [showDialog, setShowDialog] = useState(false);
 
-    // ✅ 2) No `any`: this page only uses diffusion results
     const [calculationResults, setCalculationResults] = useState<DiffusionResult | null>(null);
 
     const [isCalculating, setIsCalculating] = useState(false);
@@ -171,7 +169,7 @@ export default function Diffusion() {
                         parameters={parameters}
                     />
 
-                    {/* ✅ 3) Pass a 2-tuple to DiffusionAnimation */}
+                    {/* Pass a 2-tuple to DiffusionAnimation */}
                     {calculationResults && selectedElements.length >= 2 && (
                         <DiffusionAnimation
                             results={calculationResults}
