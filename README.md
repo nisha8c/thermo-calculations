@@ -33,6 +33,7 @@ Next up: phase diagrams, progress streaming, exportable plots.
 <img width="1763" height="910" alt="EditProj" src="https://github.com/user-attachments/assets/3cb41c8d-5132-42a2-8eaa-b7191cedea83" />
 <img width="1778" height="918" alt="PhaseD-1" src="https://github.com/user-attachments/assets/93bedec9-6f89-415c-aac5-5c3e86a83072" />
 <img width="1012" height="904" alt="PhaseD2" src="https://github.com/user-attachments/assets/2d9e71cb-a296-41c0-b4ec-9791f17a7770" />
+<img width="1780" height="904" alt="Equ" src="https://github.com/user-attachments/assets/5fee2426-9587-4024-80d8-fd868d137cda" />
 
 
 
