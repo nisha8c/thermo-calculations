@@ -31,6 +31,12 @@ Next up: phase diagrams, progress streaming, exportable plots.
 <img width="1763" height="910" alt="proj" src="https://github.com/user-attachments/assets/3661275d-8583-4fd0-a61e-ff18d32a4847" />
 <img width="1763" height="910" alt="createPr" src="https://github.com/user-attachments/assets/710e4659-97ea-4e71-931e-3971d00aa2e5" />
 <img width="1763" height="910" alt="EditProj" src="https://github.com/user-attachments/assets/3cb41c8d-5132-42a2-8eaa-b7191cedea83" />
+<img width="1778" height="918" alt="PhaseD-1" src="https://github.com/user-attachments/assets/93bedec9-6f89-415c-aac5-5c3e86a83072" />
+<img width="1012" height="904" alt="PhaseD2" src="https://github.com/user-attachments/assets/2d9e71cb-a296-41c0-b4ec-9791f17a7770" />
+
+
+
+
 
 ## NOTE 
 THERE ARE  THREE WORKSPACES
