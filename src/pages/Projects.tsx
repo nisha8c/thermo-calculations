@@ -51,7 +51,7 @@ export default function Projects() {
 
     return (
         <div className="p-4 md:p-6 space-y-4 md:space-y-6">
-            {/* Header (base44 look) */}
+            {/* Header */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -77,7 +77,7 @@ export default function Projects() {
                 </div>
             </motion.div>
 
-            {/* Projects Grid (base44 look) */}
+            {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 auto-rows-fr">
                 {projects.map((project, index) => {
                     const created = new Date(project.createdAt);
